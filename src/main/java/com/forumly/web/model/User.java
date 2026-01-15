@@ -2,9 +2,13 @@ package com.forumly.web.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "users")
 public class User {

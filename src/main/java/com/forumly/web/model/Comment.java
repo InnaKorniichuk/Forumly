@@ -1,8 +1,14 @@
 package com.forumly.web.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "comments")
 public class Comment {
     @Id
@@ -14,6 +20,9 @@ public class Comment {
 
     @Column(nullable = false)
     private int score=0;
+
+    @Column(name = "created_at",nullable = false)
+    private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

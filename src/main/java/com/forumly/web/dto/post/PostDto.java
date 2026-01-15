@@ -1,0 +1,54 @@
+package com.forumly.web.dto.post;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+import java.util.Objects;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+public class PostDto {
+    private long id;
+
+    @NotBlank
+    private String title;
+
+    @NotNull
+    private int score;
+
+    @NotNull
+    private LocalDateTime createdAt;
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof PostDto postDto)) return false;
+
+        return id == postDto.id && score == postDto.score && Objects.equals(title, postDto.title) && Objects.equals(createdAt, postDto.createdAt);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Long.hashCode(id);
+        result = 31 * result + Objects.hashCode(title);
+        result = 31 * result + score;
+        result = 31 * result + Objects.hashCode(createdAt);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "PostDto{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", score=" + score +
+                ", createdAt=" + createdAt +
+                '}';
+    }
+}
