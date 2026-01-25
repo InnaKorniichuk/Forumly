@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class PostResponseDto {
     Long id;
     String title;
+    String content;
     LocalDateTime createdAt;
     int score;
     UserDto author;

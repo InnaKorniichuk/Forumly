@@ -13,7 +13,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
-    private long id;
+    private Long id;
 
     @NotBlank(message = "The 'nickname' cannot be empty")
     private String nickname;

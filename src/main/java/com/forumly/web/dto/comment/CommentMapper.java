@@ -6,11 +6,13 @@ import com.forumly.web.model.Comment;
 import com.forumly.web.model.Post;
 import com.forumly.web.model.User;
 
+import java.time.LocalDateTime;
+
 public class CommentMapper {
-    public static Comment toEntity(CommentDto dto, User user, Post post){
+    public static Comment toEntity(CommentRequestDto dto, User user, Post post){
         Comment comment=new Comment();
         comment.setContent(dto.getContent());
-        comment.setCreatedAt(dto.getCreatedAt());
+        comment.setCreatedAt(LocalDateTime.now());
         comment.setPost(post);
         comment.setUser(user);
         comment.setScore(0);

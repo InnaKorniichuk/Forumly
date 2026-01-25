@@ -15,7 +15,7 @@ import java.util.List;
 public class Community {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @NotNull
     @Column

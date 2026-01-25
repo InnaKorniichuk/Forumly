@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,17 +15,24 @@ import java.time.LocalDateTime;
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @NotNull
     @Column
     private String title;
+
+    @NotNull
+    @Column
+    private String content;
 
     @Column(name = "created_at",nullable = false)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private int score = 0;
+
+    @OneToMany(mappedBy = "post")
+    private List<Vote> votes;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "community_id", nullable = false)

@@ -15,10 +15,13 @@ import java.util.Objects;
 @Getter
 @Setter
 public class PostDto {
-    private long id;
+    private Long id;
 
     @NotBlank
     private String title;
+
+    @NotBlank
+    private String content;
 
     @NotNull
     private int score;
@@ -30,13 +33,14 @@ public class PostDto {
     public final boolean equals(Object o) {
         if (!(o instanceof PostDto postDto)) return false;
 
-        return id == postDto.id && score == postDto.score && Objects.equals(title, postDto.title) && Objects.equals(createdAt, postDto.createdAt);
+        return score == postDto.score && Objects.equals(id, postDto.id) && Objects.equals(title, postDto.title) && Objects.equals(content, postDto.content) && Objects.equals(createdAt, postDto.createdAt);
     }
 
     @Override
     public int hashCode() {
-        int result = Long.hashCode(id);
+        int result = Objects.hashCode(id);
         result = 31 * result + Objects.hashCode(title);
+        result = 31 * result + Objects.hashCode(content);
         result = 31 * result + score;
         result = 31 * result + Objects.hashCode(createdAt);
         return result;
@@ -47,6 +51,7 @@ public class PostDto {
         return "PostDto{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
                 ", score=" + score +
                 ", createdAt=" + createdAt +
                 '}';
