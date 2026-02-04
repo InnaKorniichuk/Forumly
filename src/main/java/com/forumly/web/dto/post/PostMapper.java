@@ -24,6 +24,7 @@ public class PostMapper {
         return new PostResponseDto(
                 post.getId(),
                 post.getTitle(),
+                post.getContent(),
                 post.getCreatedAt(),
                 post.getScore(),
                 new UserDto(

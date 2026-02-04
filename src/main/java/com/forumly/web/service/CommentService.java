@@ -1,6 +1,7 @@
 package com.forumly.web.service;
 
 import com.forumly.web.dto.comment.CommentRequestDto;
+import com.forumly.web.dto.comment.CommentResponseDto;
 import com.forumly.web.model.Comment;
 
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
 public interface CommentService {
     Comment create(CommentRequestDto dto, Long authorId, Long postId);
 
-    Comment readById(Long id);
+    CommentResponseDto readById(Long id);
 
     Comment update(Long id, CommentRequestDto dto, Long userId);
 
@@ -16,5 +17,5 @@ public interface CommentService {
 
     List<Comment> getByUserId(Long userId);
 
-    List<Comment> getByPostId(Long postId);
+    List<CommentResponseDto> getByPostId(Long postId);
 }

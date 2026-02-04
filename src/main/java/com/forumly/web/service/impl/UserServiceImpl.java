@@ -2,6 +2,7 @@ package com.forumly.web.service.impl;
 
 import com.forumly.web.dto.user.UserMapper;
 import com.forumly.web.dto.user.UserRequestDto;
+import com.forumly.web.dto.user.UserResponseDto;
 import com.forumly.web.dto.user.UserUpdateDto;
 import com.forumly.web.exception.ApplicationException;
 import com.forumly.web.model.User;
@@ -45,9 +46,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User readById(Long id) {
-        return  userRepository.findById(id)
+    public UserResponseDto readById(Long id) {
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> ApplicationException.notFound("User with id " + id + " not found"));
+
+        return UserMapper.toResponse(user);
     }
 
     @Override
@@ -81,7 +84,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(Long id) {
-        User user=readById(id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> ApplicationException.notFound("User with id "+id+" not found"));
         userRepository.delete(user);
     }
 

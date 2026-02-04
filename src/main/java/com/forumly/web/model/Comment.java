@@ -3,6 +3,7 @@ package com.forumly.web.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Formula;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,7 +20,7 @@ public class Comment {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
+    @Formula("(SELECT COALESCE(SUM(v.value), 0) FROM votes v WHERE v.comment_id = id)")
     private int score=0;
 
     @Column(name = "created_at",nullable = false)

@@ -37,11 +37,6 @@ public class VoteServiceImpl implements VoteService {
             throw ApplicationException.unauthorized("You can only remove your own vote");
 
         voteRepository.delete(vote);
-
-        Post post = vote.getPost();
-        int newScore = calculatePostScore(postId);
-        post.setScore(newScore);
-        postRepository.save(post);
     }
 
     @Override
@@ -52,10 +47,7 @@ public class VoteServiceImpl implements VoteService {
         if(!vote.getUser().getId().equals(userId))
             throw ApplicationException.unauthorized("You can only remove your own vote");
 
-        Comment comment = vote.getComment();
-        int newScore = calculateCommentScore(commentId);
-        comment.setScore(newScore);
-        commentRepository.save(comment);
+        voteRepository.delete(vote);
     }
 
     @Override
@@ -74,10 +66,6 @@ public class VoteServiceImpl implements VoteService {
         vote.setType(type);
 
         voteRepository.save(vote);
-
-        int newScore = calculateCommentScore(commentId);
-        comment.setScore(newScore);
-        commentRepository.save(comment);
     }
 
     @Override
@@ -100,19 +88,5 @@ public class VoteServiceImpl implements VoteService {
         int newScore  = post.getScore();
         post.setScore(newScore);
         postRepository.save(post);
-    }
-
-    @Override
-    public int calculatePostScore(Long postId) {
-        int upvotes = voteRepository.countByPostIdAndType(postId, VoteType.UP);
-        int downvotes = voteRepository.countByPostIdAndType(postId, VoteType.DOWN);
-        return upvotes - downvotes;
-    }
-
-    @Override
-    public int calculateCommentScore(Long commentId) {
-        int upvotes = voteRepository.countByCommentIdAndType(commentId, VoteType.UP);
-        int downvotes = voteRepository.countByPostIdAndType(commentId, VoteType.DOWN);
-        return upvotes - downvotes;
     }
 }

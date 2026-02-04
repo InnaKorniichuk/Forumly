@@ -1,6 +1,7 @@
 package com.forumly.web.service;
 
 import com.forumly.web.dto.post.PostRequestDto;
+import com.forumly.web.dto.post.PostResponseDto;
 import com.forumly.web.dto.post.PostUpdateDto;
 import com.forumly.web.model.Post;
 
@@ -9,7 +10,7 @@ import java.util.List;
 public interface PostService {
     Post create(PostRequestDto dto, Long communityId, Long authorId);
 
-    Post readById(Long id);
+    PostResponseDto readById(Long id);
 
     Post update (Long id, PostUpdateDto dto, Long userId);
 
@@ -17,7 +18,7 @@ public interface PostService {
 
     List<Post> getAll();
 
-    List<Post> getByCommunityId(Long communityId);
+    List<PostResponseDto> getByCommunityId(Long communityId);
 
-    List<Post> getByAuthorId(Long userId);
+    List<PostResponseDto> getByAuthorId(Long userId);
 }

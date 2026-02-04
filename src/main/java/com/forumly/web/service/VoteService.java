@@ -10,8 +10,4 @@ public interface VoteService {
     void removeVoteFromPost(Long userId, Long postId);
 
     void removeVoteFromComment(Long userId, Long commentId);
-
-    int calculatePostScore(Long postId);
-
-    int calculateCommentScore(Long commentId);
 }

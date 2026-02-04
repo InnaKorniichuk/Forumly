@@ -2,6 +2,7 @@ package com.forumly.web.service.impl;
 
 import com.forumly.web.dto.community.CommunityMapper;
 import com.forumly.web.dto.community.CommunityRequestDto;
+import com.forumly.web.dto.community.CommunityResponseDto;
 import com.forumly.web.exception.ApplicationException;
 import com.forumly.web.model.Community;
 import com.forumly.web.model.User;
@@ -39,20 +40,26 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public Community readById(Long id) {
-        return communityRepository.findById(id)
+    public CommunityResponseDto readById(Long id) {
+        Community community = communityRepository.findById(id)
                 .orElseThrow(() -> ApplicationException.notFound("Community with id " + id + " not found"));
+
+        return CommunityMapper.toResponse(community);
     }
 
     @Override
     public void delete(Long id) {
-        Community community=readById(id);
+        Community community = communityRepository.findById(id)
+                .orElseThrow(() -> ApplicationException.notFound("Community with id " + id + " not found"));
         communityRepository.delete(community);
     }
 
     @Override
-    public List<Community> getAll() {
-        return communityRepository.findAll();
+    public List<CommunityResponseDto> getAll() {
+        List<Community> communities = communityRepository.findAll();
+        return communities.stream()
+                .map(CommunityMapper::toResponse)
+                .toList();
     }
 
     @Override
@@ -62,8 +69,15 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public List<Community> getByOwnerId(Long userId) {
+    public List<CommunityResponseDto> getByOwnerId(Long userId) {
         List<Community> communities =communityRepository.findByOwnerId(userId);
-        return communities != null ? communities : Collections.emptyList() ;
+
+        if (communities == null || communities.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return communities.stream()
+                .map(CommunityMapper::toResponse)
+                .toList();
     }
 }

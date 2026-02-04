@@ -31,6 +31,7 @@ public class CommunityMapper {
                 community.getPosts().stream()
                         .map(post->new PostDto(post.getId(),
                                 post.getTitle(),
+                                post.getContent(),
                                 post.getScore(),
                                 post.getCreatedAt()))
                         .toList()

@@ -2,6 +2,7 @@ package com.forumly.web.service.impl;
 
 import com.forumly.web.dto.comment.CommentMapper;
 import com.forumly.web.dto.comment.CommentRequestDto;
+import com.forumly.web.dto.comment.CommentResponseDto;
 import com.forumly.web.exception.ApplicationException;
 import com.forumly.web.model.Comment;
 import com.forumly.web.model.Post;
@@ -47,9 +48,10 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment readById(Long id) {
-        return commentRepository.findById(id)
+    public CommentResponseDto readById(Long id) {
+        Comment comment = commentRepository.findById(id)
                 .orElseThrow(() ->  ApplicationException.notFound("Comment with id " + id + " not found"));
+        return CommentMapper.toResponse(comment);
     }
 
     @Override
@@ -71,7 +73,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void delete(Long id, Long userId) {
-        Comment comment=readById(id);
+        Comment comment = commentRepository.findById(id)
+                .orElseThrow(() ->  ApplicationException.notFound("Comment with id " + id + " not found"));
 
         if(!comment.getUser().getId().equals(userId))
             throw ApplicationException.unauthorized("Only comment author or admin can delete");
@@ -86,8 +89,11 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<Comment> getByPostId(Long postId) {
-        List<Comment> comments = commentRepository.findByPostId(postId);
+    public List<CommentResponseDto> getByPostId(Long postId) {
+        List<CommentResponseDto> comments = commentRepository.findByPostId(postId)
+                .stream()
+                .map(CommentMapper::toResponse)
+                .toList();
         return comments != null ? comments : Collections.emptyList();
     }
 }

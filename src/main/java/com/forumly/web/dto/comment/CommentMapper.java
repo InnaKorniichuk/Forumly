@@ -33,6 +33,7 @@ public class CommentMapper {
                 new PostDto(
                         comment.getPost().getId(),
                         comment.getPost().getTitle(),
+                        comment.getPost().getContent(),
                         comment.getPost().getScore(),
                         comment.getPost().getCreatedAt()));
     }

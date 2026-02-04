@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Formula;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,8 +29,8 @@ public class Post {
     @Column(name = "created_at",nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
-    private int score = 0;
+    @Formula("(SELECT COALESCE(SUM(v.value), 0) FROM votes v WHERE v.post_id = id)")
+    private int score;
 
     @OneToMany(mappedBy = "post")
     private List<Vote> votes;

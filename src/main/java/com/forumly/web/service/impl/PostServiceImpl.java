@@ -2,6 +2,7 @@ package com.forumly.web.service.impl;
 
 import com.forumly.web.dto.post.PostMapper;
 import com.forumly.web.dto.post.PostRequestDto;
+import com.forumly.web.dto.post.PostResponseDto;
 import com.forumly.web.dto.post.PostUpdateDto;
 import com.forumly.web.exception.ApplicationException;
 import com.forumly.web.model.Community;
@@ -41,9 +42,10 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post readById(Long id) {
-        return postRepository.findById(id)
+    public PostResponseDto readById(Long id) {
+        Post post = postRepository.findById(id)
                 .orElseThrow(() -> ApplicationException.notFound("Post with id " + id + " not found"));
+        return PostMapper.toResponse(post);
     }
 
     @Override
@@ -70,7 +72,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void delete(Long id, Long userId) {
-        Post post = readById(id);
+        Post post = postRepository.findById(id)
+                .orElseThrow(() ->ApplicationException.notFound("Post not found"));
 
         if (!post.getAuthor().getId().equals(userId)) {
             throw ApplicationException.unauthorized("Only post author or admin can delete");
@@ -85,12 +88,18 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getByCommunityId(Long communityId) {
-        return postRepository.findByCommunityId(communityId);
+    public List<PostResponseDto> getByCommunityId(Long communityId) {
+        return postRepository.findByCommunityId(communityId)
+                .stream()
+                .map(PostMapper::toResponse)
+                .toList();
     }
 
     @Override
-    public List<Post> getByAuthorId(Long userId) {
-        return postRepository.findByAuthorId(userId);
+    public List<PostResponseDto> getByAuthorId(Long userId) {
+        return postRepository.findByAuthorId(userId)
+                .stream()
+                .map(PostMapper::toResponse)
+                .toList();
     }
 }

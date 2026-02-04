@@ -3,11 +3,11 @@ package com.forumly.web.dto.post;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Size;
-import lombok.Value;
+import lombok.Data;
 import tools.jackson.databind.PropertyNamingStrategies;
 import tools.jackson.databind.annotation.JsonNaming;
 
-@Value
+@Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class PostUpdateDto {
     @Nullable
