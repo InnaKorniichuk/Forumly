@@ -1,9 +1,7 @@
 package com.forumly.web.dto.community;
 
 import lombok.Data;
-import lombok.Value;
 import tools.jackson.databind.PropertyNamingStrategies;
-import tools.jackson.databind.PropertyNamingStrategy;
 import tools.jackson.databind.annotation.JsonNaming;
 
 @Data

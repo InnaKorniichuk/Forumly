@@ -43,13 +43,17 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Vote> votes;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + getRole().name()));
     }
 
     @Override
     public String getUsername() {
-        return nickname;
+        return email;
     }
 }

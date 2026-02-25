@@ -9,14 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface VoteRepository extends JpaRepository<Vote, Long> {
-    boolean existsByUserIdAndCommentId (Long userId, Long commentId);
-
-    int countByCommentIdAndType(Long commentId, VoteType type);
-
-    int countByPostIdAndType(Long postId, VoteType type);
-
-    boolean existsByUserIdAndPostId(Long userId, Long postId);
-
     Optional<Vote> findByUserIdAndPostId(Long userId, Long postId);
 
     Optional<Vote> findByUserIdAndCommentId(Long userId, Long commentId);

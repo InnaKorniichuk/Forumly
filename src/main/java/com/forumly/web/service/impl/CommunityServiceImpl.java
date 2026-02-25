@@ -9,7 +9,6 @@ import com.forumly.web.model.User;
 import com.forumly.web.repository.CommunityRepository;
 import com.forumly.web.repository.UserRepository;
 import com.forumly.web.service.CommunityService;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

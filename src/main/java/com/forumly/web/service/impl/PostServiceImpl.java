@@ -3,7 +3,6 @@ package com.forumly.web.service.impl;
 import com.forumly.web.dto.post.PostMapper;
 import com.forumly.web.dto.post.PostRequestDto;
 import com.forumly.web.dto.post.PostResponseDto;
-import com.forumly.web.dto.post.PostUpdateDto;
 import com.forumly.web.exception.ApplicationException;
 import com.forumly.web.model.Community;
 import com.forumly.web.model.Post;
@@ -49,7 +48,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post update(Long id, PostUpdateDto dto, Long userId) {
+    public Post update(Long id, PostRequestDto dto, Long userId) {
         Post existing=postRepository.findById(id)
                 .orElseThrow(() ->ApplicationException.notFound("Post not found"));
 

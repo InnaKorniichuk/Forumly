@@ -2,7 +2,6 @@ package com.forumly.web.service;
 
 import com.forumly.web.dto.post.PostRequestDto;
 import com.forumly.web.dto.post.PostResponseDto;
-import com.forumly.web.dto.post.PostUpdateDto;
 import com.forumly.web.model.Post;
 
 import java.util.List;
@@ -12,7 +11,7 @@ public interface PostService {
 
     PostResponseDto readById(Long id);
 
-    Post update (Long id, PostUpdateDto dto, Long userId);
+    Post update (Long id, PostRequestDto dto, Long userId);
 
     void delete (Long id, Long userId);
 

@@ -7,6 +7,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@Table(name = "votes")
 public class Vote {
     @Id
     @GeneratedValue

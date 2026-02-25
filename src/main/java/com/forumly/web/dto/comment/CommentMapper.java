@@ -15,26 +15,34 @@ public class CommentMapper {
         comment.setCreatedAt(LocalDateTime.now());
         comment.setPost(post);
         comment.setUser(user);
-        comment.setScore(0);
 
         return comment;
     }
 
-    public static CommentResponseDto toResponse(Comment comment){
+    public static CommentResponseDto toResponse(Comment comment) {
+        int score = comment.getVotes() != null
+                ? comment.getVotes().stream().mapToInt(v -> v.getType().getValue()).sum() : 0;
+
         return new CommentResponseDto(
                 comment.getId(),
                 comment.getContent(),
-                comment.getScore(),
+                score,
                 comment.getCreatedAt(),
+
                 new UserDto(
                         comment.getUser().getId(),
                         comment.getUser().getNickname(),
-                        comment.getUser().getEmail()),
+                        comment.getUser().getEmail()
+                ),
+
                 new PostDto(
                         comment.getPost().getId(),
                         comment.getPost().getTitle(),
                         comment.getPost().getContent(),
                         comment.getPost().getScore(),
-                        comment.getPost().getCreatedAt()));
+                        comment.getPost().getCreatedAt()
+                )
+        );
     }
+
 }

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${post.title}">Post</title>
+
+  <style>
+    :root {
+      --bg:#f4f6fb;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --primary:#4a7dff;
+      --up:#e7f3ff;
+      --down:#ffe7e7;
+      --border:#e5e7eb;
+      --radius:12px;
+    }
+
+    * { box-sizing:border-box; }
+
+    body {
+      margin:0;
+      padding:40px 16px;
+      background:var(--bg);
+      font-family:system-ui, sans-serif;
+      color:var(--text);
+    }
+
+    .container {
+      max-width:900px;
+      margin:auto;
+      background:var(--card);
+      padding:36px;
+      border-radius:var(--radius);
+      box-shadow:0 12px 30px rgba(0,0,0,.06);
+    }
+
+    h1 { margin:0 0 8px; font-size:34px; }
+    h3 { margin:24px 0 12px; }
+
+    .meta { font-size:14px; color:var(--muted); margin-bottom:20px; }
+    .score { display:inline-block; padding:6px 14px; border-radius:999px; background:#f1f5f9; font-weight:600; font-size:14px; margin:16px 0; }
+    .post-content { margin-top:24px; line-height:1.7; }
+    hr { border:none; border-top:1px solid var(--border); margin:32px 0; }
+
+    .comment-form { background:#f8fafc; padding:16px; border-radius:var(--radius); margin-bottom:32px; }
+    textarea { width:100%; min-height:100px; padding:12px; border-radius:8px; border:1px solid var(--border); font-family:inherit; resize:vertical; }
+    button { cursor:pointer; border:none; border-radius:8px; padding:8px 14px; font-size:14px; }
+    .primary-btn { background:var(--primary); color:white; margin-top:10px; }
+
+    .comment { border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:16px; }
+    .comment-header { display:flex; justify-content:space-between; align-items:center; }
+    .comment-author { font-weight:600; }
+    .comment-footer { display:flex; justify-content:space-between; align-items:center; margin-top:10px; }
+    .vote-buttons { display:flex; gap:6px; }
+    .vote-buttons button { width:34px; height:34px; display:flex; align-items:center; justify-content:center; font-size:16px; }
+    .upvote { background:var(--up); }
+    .downvote { background:var(--down); }
+    .empty { font-style:italic; color:var(--muted); }
+
+    /* MODAL */
+    #editModal {
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.45);
+      align-items:center;
+      justify-content:center;
+      z-index:1000;
+    }
+
+    #editModal .modal-box {
+      background:white;
+      width:420px;
+      padding:20px;
+      border-radius:12px;
+      box-shadow:0 20px 40px rgba(0,0,0,.2);
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1 th:text="${post.title}">Post title</h1>
+
+  <div class="meta">
+    <strong>Author:</strong> <span th:text="${post.author.nickname}"></span> ·
+    <strong>Community:</strong> <span th:text="${post.community.name}"></span> ·
+    <strong>Created:</strong> <span th:text="${#temporals.format(post.createdAt,'yyyy-MM-dd HH:mm')}"></span>
+  </div>
+
+  <div class="score">Score: <span th:text="${post.score}"></span></div>
+
+  <div class="post-content" th:text="${post.content}"></div>
+
+  <hr>
+
+  <h3>Write a comment</h3>
+  <div class="comment-form">
+    <form th:action="@{/posts/{post_id}/comments/create(post_id=${post.id})}" method="post">
+      <textarea name="content" required></textarea>
+      <button class="primary-btn" type="submit">Post comment</button>
+    </form>
+  </div>
+
+  <h3>Comments</h3>
+
+  <div th:if="${#lists.isEmpty(post.comments)}" class="empty">
+    No comments yet.
+  </div>
+
+  <div th:each="comment : ${post.comments}" class="comment">
+
+    <div class="comment-header">
+      <span class="comment-author" th:text="${comment.author.nickname}"></span>
+    </div>
+
+    <div th:text="${comment.content}"></div>
+
+    <div class="comment-footer">
+
+      <span>Score: <strong th:text="${comment.score}"></strong></span>
+
+      <div style="display:flex; gap:8px; align-items:center;">
+
+        <form th:if="${#authentication.name == comment.author.email}"
+              th:action="@{/posts/{post_id}/comments/{id}/delete(post_id=${post.id},id=${comment.id})}"
+              method="get">
+          <button style="background:#fee2e2;color:#991b1b;">🗑</button>
+        </form>
+
+        <button th:if="${#authentication.name == comment.author.email}"
+                th:data-id="${comment.id}"
+                th:data-content="${comment.content}"
+                onclick="openEditModal(this)"
+                style="background:#e0e7ff;color:#1e3a8a;">
+          ✏️ Edit
+        </button>
+
+        <div class="vote-buttons">
+          <form th:action="@{/votes/comments/{id}/add(id=${comment.id})}" method="post">
+            <input type="hidden" name="voteType" value="UP">
+            <button class="upvote">⬆</button>
+          </form>
+          <form th:action="@{/votes/comments/{id}/add(id=${comment.id})}" method="post">
+            <input type="hidden" name="voteType" value="DOWN">
+            <button class="downvote">⬇</button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="editModal">
+  <div class="modal-box">
+    <h3>Edit comment</h3>
+    <form id="editForm" method="post">
+      <textarea id="editContent" name="content" required></textarea>
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:12px;">
+        <button type="button" onclick="closeEditModal()">Cancel</button>
+        <button class="primary-btn" type="submit">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script th:inline="javascript">
+  const postId = [[${post.id}]];
+
+  function openEditModal(btn) {
+    const id = btn.dataset.id;
+    const content = btn.dataset.content;
+
+    document.getElementById("editContent").value = content;
+    document.getElementById("editForm").action =
+            `/posts/${postId}/comments/${id}/update`;
+
+    document.getElementById("editModal").style.display = "flex";
+  }
+
+  function closeEditModal() {
+    document.getElementById("editModal").style.display = "none";
+  }
+</script>
+
+</body>
+</html>

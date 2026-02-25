@@ -4,9 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Formula;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -29,8 +29,8 @@ public class Post {
     @Column(name = "created_at",nullable = false)
     private LocalDateTime createdAt;
 
-    @Formula("(SELECT COALESCE(SUM(v.value), 0) FROM votes v WHERE v.post_id = id)")
-    private int score;
+    @Column(nullable = false)
+    private int score=0;
 
     @OneToMany(mappedBy = "post")
     private List<Vote> votes;
@@ -42,4 +42,8 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
     private User author;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("createdAt DESC") // Сортування за датою (новіші перші)
+    private List<Comment> comments = new ArrayList<>();
 }

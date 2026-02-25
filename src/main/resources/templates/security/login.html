@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+
+<body style="font-family: Arial; padding: 20px;">
+
+<div style="max-width: 300px; margin: 100px auto;">
+    <h2 style="text-align: center;">Login</h2>
+
+    <div th:if="${param.error}" style="color: red; margin: 10px 0;">
+        Invalid email or password
+    </div>
+
+    <form action="/login" method="post" style="margin: 20px 0;">
+
+        <div style="margin: 10px 0;">
+            <input type="email"
+                   name="email"
+                   placeholder="Email"
+                   style="width: 100%; padding: 8px;"
+                   required>
+        </div>
+
+        <div style="margin: 10px 0;">
+            <input type="password"
+                   name="password"
+                   placeholder="Password"
+                   style="width: 100%; padding: 8px;"
+                   required>
+        </div>
+
+        <button type="submit"
+                style="width: 100%; padding: 10px; background: blue; color: white; border: none;">
+            Login
+        </button>
+    </form>
+
+    <div style="text-align: center;">
+        <a href="/users/create">Register</a> |
+        <a href="/">Home</a>
+    </div>
+</div>
+
+</body>
+</html>

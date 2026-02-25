@@ -1,5 +1,6 @@
 package com.forumly.web.dto.post;
 
+import com.forumly.web.dto.comment.CommentResponseDto;
 import com.forumly.web.dto.community.CommunityDto;
 import com.forumly.web.dto.user.UserDto;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import tools.jackson.databind.PropertyNamingStrategies;
 import tools.jackson.databind.annotation.JsonNaming;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Value
 @AllArgsConstructor
@@ -20,4 +22,5 @@ public class PostResponseDto {
     int score;
     UserDto author;
     CommunityDto community;
+    List<CommentResponseDto> comments;
 }

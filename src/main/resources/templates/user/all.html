@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All Users</title>
+
+    <style>
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            background: #f6f7f9;
+            margin: 0;
+            padding: 40px;
+            color: #222;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 32px;
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 24px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 14px 12px;
+            text-align: left;
+        }
+
+        th {
+            background: #f3f4f6;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        tr {
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        tr:last-child {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        .id {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .nickname {
+            font-weight: 600;
+        }
+
+        .email {
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .empty {
+            margin-top: 20px;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 24px;
+            text-decoration: none;
+            color: #4f46e5;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Users</h1>
+
+    <table th:if="${users != null and !users.isEmpty()}">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nickname</th>
+            <th>Email</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td class="id" th:text="${user.id}">1</td>
+
+            <td class="nickname">
+                <a th:href="@{/users/{id}/read(id=${user.id})}"
+                   th:text="${user.nickname}"
+                   style="color:#4a7dff; text-decoration:none;">
+                    Nickname
+                </a>
+            </td>
+
+            <td class="email" th:text="${user.email}">email@example.com</td>
+
+            <td>
+                <form th:action="@{/users/{id}/delete(id=${user.id})}" method="post" style="display:inline;">
+                    <button type="submit" style="
+                background-color: #ef4444;
+                color: white;
+                border: none;
+                padding: 6px 12px;
+                border-radius: 6px;
+                cursor: pointer;
+            ">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="empty" th:if="${users == null or users.isEmpty()}">
+        No users found.
+    </div>
+
+    <a href="/" class="back-link">← Back to home</a>
+
+</div>
+
+</body>
+</html>

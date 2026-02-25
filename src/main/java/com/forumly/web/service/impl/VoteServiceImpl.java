@@ -10,6 +10,7 @@ import com.forumly.web.service.VoteService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
+
 @Service
 @Transactional
 public class VoteServiceImpl implements VoteService {
@@ -29,64 +30,82 @@ public class VoteServiceImpl implements VoteService {
     }
 
     @Override
-    public void removeVoteFromPost(Long userId, Long postId) {
-        Vote vote = voteRepository.findByUserIdAndPostId(userId, postId)
-                .orElseThrow(() -> ApplicationException.notFound("Vote not found"));
-
-        if (!vote.getUser().getId().equals(userId))
-            throw ApplicationException.unauthorized("You can only remove your own vote");
-
-        voteRepository.delete(vote);
-    }
-
-    @Override
-    public void removeVoteFromComment(Long userId, Long commentId) {
-        Vote vote = voteRepository.findByUserIdAndCommentId(userId, commentId)
-                .orElseThrow(() -> ApplicationException.notFound("Vote not found"));
-
-        if(!vote.getUser().getId().equals(userId))
-            throw ApplicationException.unauthorized("You can only remove your own vote");
-
-        voteRepository.delete(vote);
-    }
-
-    @Override
-    public void addVoteToComment(Long userId, Long commentId, VoteType type) {
-        if(voteRepository.existsByUserIdAndCommentId(userId,commentId))
-            throw  ApplicationException.conflict("You have already voted");
-
+    @Transactional
+    public void vote(Long userId, Long commentId, VoteType newType) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> ApplicationException.notFound("Comment not found"));
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> ApplicationException.notFound("User not found"));
 
-        Vote vote = new Vote();
-        vote.setComment(comment);
-        vote.setUser(user);
-        vote.setType(type);
+        Vote existingVote = voteRepository.findByUserIdAndCommentId(userId, commentId)
+                .orElse(null);
 
-        voteRepository.save(vote);
+        if (existingVote == null) {
+            Vote vote = new Vote();
+            vote.setUser(user);
+            vote.setComment(comment);
+            vote.setType(newType);
+            voteRepository.save(vote);
+
+            comment.setScore(comment.getScore() + newType.getValue());
+            commentRepository.save(comment);
+            return;
+        }
+
+        if (existingVote.getType() == newType) {
+            comment.setScore(comment.getScore() - existingVote.getType().getValue());
+            voteRepository.delete(existingVote);
+            commentRepository.save(comment);
+            return;
+        }
+
+        int delta = newType.getValue() - existingVote.getType().getValue();
+        existingVote.setType(newType);
+        voteRepository.save(existingVote);
+
+        comment.setScore(comment.getScore() + delta);
+        commentRepository.save(comment);
     }
 
     @Override
-    public void addVoteToPost(Long userId, Long postId, VoteType type) {
-        if(voteRepository.existsByUserIdAndPostId(userId,postId))
-            throw  ApplicationException.conflict("You have already voted");
+    @Transactional
+    public void votePost(Long userId, Long postId, VoteType newType) {
 
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> ApplicationException.notFound("Post not found"));
+                .orElseThrow(() -> ApplicationException.notFound("Comment not found"));
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> ApplicationException.notFound("User not found"));
 
-        Vote vote = new Vote();
-        vote.setPost(post);
-        vote.setUser(user);
-        vote.setType(type);
+        Vote existingVote = voteRepository.findByUserIdAndPostId(userId, postId)
+                .orElse(null);
 
-        voteRepository.save(vote);
+        if (existingVote == null) {
+            Vote vote = new Vote();
+            vote.setUser(user);
+            vote.setPost(post);
+            vote.setType(newType);
+            voteRepository.save(vote);
+            System.out.println(">>>>>>" + newType.getValue());
+            post.setScore(post.getScore() + newType.getValue());
 
-        int newScore  = post.getScore();
-        post.setScore(newScore);
+            postRepository.save(post);
+            return;
+        }
+
+        if (existingVote.getType() == newType) {
+            post.setScore(post.getScore() - existingVote.getType().getValue());
+            voteRepository.delete(existingVote);
+            postRepository.save(post);
+            return;
+        }
+
+        int delta = newType.getValue() - existingVote.getType().getValue();
+        existingVote.setType(newType);
+        voteRepository.save(existingVote);
+
+        post.setScore(post.getScore() + delta);
         postRepository.save(post);
     }
 }

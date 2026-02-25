@@ -3,13 +3,14 @@ package com.forumly.web.service.impl;
 import com.forumly.web.dto.user.UserMapper;
 import com.forumly.web.dto.user.UserRequestDto;
 import com.forumly.web.dto.user.UserResponseDto;
-import com.forumly.web.dto.user.UserUpdateDto;
 import com.forumly.web.exception.ApplicationException;
+import com.forumly.web.model.Role;
 import com.forumly.web.model.User;
 import com.forumly.web.repository.UserRepository;
 import com.forumly.web.service.UserService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,9 +20,11 @@ import java.util.List;
 @Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public  UserServiceImpl(UserRepository userRepository){
+    public  UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder){
         this.userRepository=userRepository;
+        this.passwordEncoder=passwordEncoder;
     }
 
     @Override
@@ -39,9 +42,9 @@ public class UserServiceImpl implements UserService {
 
         User user = UserMapper.toEntity(dto);
 
-        // TODO ENCODE PASSWORD
-        user.setPassword(dto.getPassword());
-
+        String encodedPassword = passwordEncoder.encode(dto.getPassword());
+        user.setPassword(encodedPassword);
+        user.setRole(Role.USER);
         return userRepository.save(user);
     }
 
@@ -54,7 +57,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User update(Long id, UserUpdateDto dto) {
+    public User update(Long id, UserRequestDto dto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> ApplicationException.notFound("User not found"));
 
@@ -95,7 +98,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getByEmail(String email) {
+    public User findByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> ApplicationException.notFound("User with such email doesn't exist"));
     }
@@ -110,7 +113,13 @@ public class UserServiceImpl implements UserService {
     public UserDetails loadUserByUsername(String username)
             throws UsernameNotFoundException {
 
-        return userRepository.findByNickname(username)
-                .orElseThrow(() -> ApplicationException.notFound("User not found with nickname: " + username));
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
+
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getEmail())
+                .password(user.getPassword())
+                .roles("USER")
+                .build();
     }
 }

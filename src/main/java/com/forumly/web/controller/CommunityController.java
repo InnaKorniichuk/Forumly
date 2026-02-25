@@ -5,67 +5,72 @@ import com.forumly.web.dto.community.CommunityResponseDto;
 import com.forumly.web.model.Community;
 import com.forumly.web.model.User;
 import com.forumly.web.service.CommunityService;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import com.forumly.web.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
 @RequestMapping("/communities")
 public class CommunityController {
     private final CommunityService communityService;
+    private final UserService userService;
 
-    public CommunityController(CommunityService communityService){
+    public CommunityController(CommunityService communityService, UserService userService){
         this.communityService = communityService;
+        this.userService=userService;
     }
 
     @GetMapping("/create")
     public String create(Model model){
-        model.addAttribute("Community", new CommunityRequestDto());
-        return "create-community";
+        model.addAttribute("community", new CommunityRequestDto());
+        return "community/create";
     }
 
     @PostMapping("/create")
     public String create(@ModelAttribute("community") CommunityRequestDto communityDto,
-                         @AuthenticationPrincipal User currentUser,
+                         Principal principal,
                          BindingResult result){
         if (result.hasErrors()) {
-            return "create-community";
+            return "community/create";
         }
 
+        String email = principal.getName();
+        User currentUser = userService.findByEmail(email);
         Community community = communityService.create(communityDto, currentUser.getId());
-        return "redirect:/communities/" + community.getId() + "/read";
+
+        return "community/getAll";
     }
 
     @GetMapping("/{id}/read")
     public String read(@PathVariable Long id, Model model){
         CommunityResponseDto communityResponseDto = communityService.readById(id);
         model.addAttribute("community",communityResponseDto);
-        return "community-info";
+        return "community/read";
     }
 
     @GetMapping("/{id}/delete")
     public String delete(@PathVariable Long id){
-        //TODO only admin can delete
         communityService.delete(id);
-        return "communities";
+        return "community/getAll";
     }
 
     @GetMapping("/{user_id}/getByUserId")
     public String getCommunitiesByUserId(@PathVariable("user_id") Long userId, Model model){
         List<CommunityResponseDto> communities = communityService.getByOwnerId(userId);
         model.addAttribute("communities", communities);
-        return "communities";
+        return "user/communities";
     }
 
     @GetMapping("/getAll")
     public String getAll(Model model){
         List<CommunityResponseDto> communities = communityService.getAll();
         model.addAttribute("communities",communities);
-        return "communities";
+        return "community/getAll";
     }
 
 }
