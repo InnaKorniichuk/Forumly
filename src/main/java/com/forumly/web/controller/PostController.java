@@ -53,17 +53,15 @@ public class PostController {
     }
 
     @GetMapping("/{id}/delete")
-    public String delete(@PathVariable Long id,
-                         Principal principal) {
-        String email = principal.getName();
-        User currentUser = userService.findByEmail(email);
+    public String delete(@PathVariable Long id, Principal principal) {
+        User currentUser = userService.findByEmail(principal.getName());
 
         if (!currentUser.getRole().equals(Role.ADMIN)
                 && !currentUser.getId().equals(postService.readById(id).getAuthor().getId()))
             throw ApplicationException.unauthorized("You are not allowed to delete this post");
 
         postService.delete(id, currentUser.getId());
-        return "redirect:/users/all";
+        return "redirect:/communities/getAll";
     }
 
     @GetMapping("/{id}/read")

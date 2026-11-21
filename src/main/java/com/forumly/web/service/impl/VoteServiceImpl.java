@@ -10,7 +10,6 @@ import com.forumly.web.service.VoteService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
-
 @Service
 @Transactional
 public class VoteServiceImpl implements VoteService {
@@ -69,11 +68,9 @@ public class VoteServiceImpl implements VoteService {
     }
 
     @Override
-    @Transactional
-    public void votePost(Long userId, Long postId, VoteType newType) {
-
+    public Long votePost(Long userId, Long postId, VoteType newType) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> ApplicationException.notFound("Comment not found"));
+                .orElseThrow(() -> ApplicationException.notFound("Post not found"));
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> ApplicationException.notFound("User not found"));
@@ -87,25 +84,18 @@ public class VoteServiceImpl implements VoteService {
             vote.setPost(post);
             vote.setType(newType);
             voteRepository.save(vote);
-            System.out.println(">>>>>>" + newType.getValue());
             post.setScore(post.getScore() + newType.getValue());
-
-            postRepository.save(post);
-            return;
-        }
-
-        if (existingVote.getType() == newType) {
+        } else if (existingVote.getType() == newType) {
             post.setScore(post.getScore() - existingVote.getType().getValue());
             voteRepository.delete(existingVote);
-            postRepository.save(post);
-            return;
+        } else {
+            int delta = newType.getValue() - existingVote.getType().getValue();
+            existingVote.setType(newType);
+            voteRepository.save(existingVote);
+            post.setScore(post.getScore() + delta);
         }
 
-        int delta = newType.getValue() - existingVote.getType().getValue();
-        existingVote.setType(newType);
-        voteRepository.save(existingVote);
-
-        post.setScore(post.getScore() + delta);
         postRepository.save(post);
+        return post.getCommunity().getId();
     }
 }

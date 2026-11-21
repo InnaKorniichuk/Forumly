@@ -2,10 +2,10 @@ package com.forumly.web.controller;
 
 import com.forumly.web.dto.community.CommunityRequestDto;
 import com.forumly.web.dto.community.CommunityResponseDto;
-import com.forumly.web.model.Community;
 import com.forumly.web.model.User;
 import com.forumly.web.service.CommunityService;
 import com.forumly.web.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,18 +32,17 @@ public class CommunityController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute("community") CommunityRequestDto communityDto,
-                         Principal principal,
-                         BindingResult result){
+    public String create(@Valid @ModelAttribute("community") CommunityRequestDto communityDto,
+                         BindingResult result,
+                         Principal principal) {
         if (result.hasErrors()) {
             return "community/create";
         }
 
-        String email = principal.getName();
-        User currentUser = userService.findByEmail(email);
-        Community community = communityService.create(communityDto, currentUser.getId());
+        User currentUser = userService.findByEmail(principal.getName());
+        communityService.create(communityDto, currentUser.getId());
 
-        return "community/getAll";
+        return "redirect:/communities/getAll";
     }
 
     @GetMapping("/{id}/read")
@@ -54,9 +53,9 @@ public class CommunityController {
     }
 
     @GetMapping("/{id}/delete")
-    public String delete(@PathVariable Long id){
+    public String delete(@PathVariable Long id) {
         communityService.delete(id);
-        return "community/getAll";
+        return "redirect:/communities/getAll";
     }
 
     @GetMapping("/{user_id}/getByUserId")

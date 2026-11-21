@@ -49,11 +49,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Post update(Long id, PostRequestDto dto, Long userId) {
-        Post existing=postRepository.findById(id)
-                .orElseThrow(() ->ApplicationException.notFound("Post not found"));
+        Post existing = postRepository.findById(id)
+                .orElseThrow(() -> ApplicationException.notFound("Post not found"));
 
-        if(!existing.getAuthor().getId().equals(userId))
-            throw ApplicationException.unauthorized("Uou have no access to update the post");
+        if (!existing.getAuthor().getId().equals(userId))
+            throw ApplicationException.unauthorized("You have no access to update the post");
 
         if (dto.getTitle() != null && !dto.getTitle().equals(existing.getTitle())) {
             postRepository.findByTitle(dto.getTitle())
@@ -63,6 +63,9 @@ public class PostServiceImpl implements PostService {
                         }
                     });
             existing.setTitle(dto.getTitle());
+        }
+
+        if (dto.getContent() != null) {
             existing.setContent(dto.getContent());
         }
 

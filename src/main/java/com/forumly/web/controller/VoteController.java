@@ -27,15 +27,13 @@ public class VoteController {
     }
 
     @PostMapping("/posts/{post_id}/add")
-    public String addVoteToPost(
-            @PathVariable("post_id") Long postId,
-            @RequestParam("voteType") VoteType voteType,
-            Principal principal) {
+    public String addVoteToPost(@PathVariable("post_id") Long postId,
+                                @RequestParam("voteType") VoteType voteType,
+                                Principal principal) {
         User currentUser = userService.findByEmail(principal.getName());
+        Long communityId = voteService.votePost(currentUser.getId(), postId, voteType);
 
-        voteService.votePost(currentUser.getId(), postId, voteType);
-
-        return "redirect:/communities/" + postId + "/read";
+        return "redirect:/communities/" + communityId + "/read";
     }
 
     @PostMapping("/comments/{comment_id}/add")
@@ -52,16 +50,5 @@ public class VoteController {
                 .getId();
 
         return "redirect:/posts/" + postId + "/read";
-    }
-
-    @PostMapping("/posts/{post_id}/remove")
-    public String removeVoteFromPost(@PathVariable("post_id") Long postId){
-        return "redirect:/posts/"+postId+"/read";
-    }
-
-    @PostMapping("/comments/{comment_id}/remove")
-    public String removeVoteFromComment(@PathVariable("comment_id") Long commentId){
-        Long postId = commentService.readById(commentId).getPost().getId();
-        return "redirect:/posts/"+postId+"/read";
     }
 }
