@@ -10,5 +10,4 @@ public class SecurityController {
     public String login(){
         return "security/login";
     }
-
 }

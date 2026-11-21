@@ -103,16 +103,20 @@ public class UserController {
     public String update(@PathVariable Long id,
                          @Valid @ModelAttribute("userUpdate") UserRequestDto dto,
                          BindingResult result,
-                         Model model) {
+                         Model model,
+                         Principal principal) {
+        User currentUser = userService.findByEmail(principal.getName());
+
+        if (!currentUser.getId().equals(id))
+            throw ApplicationException.unauthorized("You are not allowed to edit this user's profile");
+
         if (result.hasErrors()) {
-            UserResponseDto userInfo = userService.readById(id);
-            model.addAttribute("userInfo", userInfo);
+            model.addAttribute("userInfo", userService.readById(id));
             return "user/update";
         }
 
         userService.update(id, dto);
         return "redirect:/users/" + id + "/read";
-
     }
 
 }

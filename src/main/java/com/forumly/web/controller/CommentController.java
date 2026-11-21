@@ -2,7 +2,6 @@ package com.forumly.web.controller;
 
 import com.forumly.web.dto.comment.CommentRequestDto;
 import com.forumly.web.exception.ApplicationException;
-import com.forumly.web.model.Role;
 import com.forumly.web.model.User;
 import com.forumly.web.service.CommentService;
 import com.forumly.web.service.UserService;
@@ -43,11 +42,6 @@ public class CommentController {
                          @PathVariable Long id,
                          Principal principal) {
         User currentUser = userService.findByEmail(principal.getName());
-
-        if (!currentUser.getId().equals(commentService.readById(id).getAuthor().getId())
-                && !currentUser.getRole().equals(Role.ADMIN))
-            throw ApplicationException.unauthorized("You are not allowed to delete this comment");
-
         commentService.delete(id, currentUser.getId());
         return "redirect:/posts/" + postId + "/read";
     }

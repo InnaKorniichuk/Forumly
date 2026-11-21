@@ -4,7 +4,6 @@ import com.forumly.web.dto.post.PostRequestDto;
 import com.forumly.web.dto.post.PostResponseDto;
 import com.forumly.web.exception.ApplicationException;
 import com.forumly.web.model.Post;
-import com.forumly.web.model.Role;
 import com.forumly.web.model.User;
 import com.forumly.web.service.PostService;
 import com.forumly.web.service.UserService;
@@ -55,11 +54,6 @@ public class PostController {
     @GetMapping("/{id}/delete")
     public String delete(@PathVariable Long id, Principal principal) {
         User currentUser = userService.findByEmail(principal.getName());
-
-        if (!currentUser.getRole().equals(Role.ADMIN)
-                && !currentUser.getId().equals(postService.readById(id).getAuthor().getId()))
-            throw ApplicationException.unauthorized("You are not allowed to delete this post");
-
         postService.delete(id, currentUser.getId());
         return "redirect:/communities/getAll";
     }
@@ -72,20 +66,15 @@ public class PostController {
     }
 
     @GetMapping("/{id}/update")
-    public String update(@PathVariable Long id,
-                         Model model,
-                         Principal principal) {
-        String email = principal.getName();
-        User currentUser = userService.findByEmail(email);
+    public String update(@PathVariable Long id, Model model, Principal principal) {
+        User currentUser = userService.findByEmail(principal.getName());
+        PostResponseDto post = postService.readById(id);
 
-        if (!currentUser.getId().equals(postService.readById(id).getAuthor().getId())
-                && !currentUser.getRole().equals(Role.ADMIN))
+        if (!currentUser.getId().equals(post.getAuthor().getId()))
             throw ApplicationException.unauthorized("You are not allowed to update this post");
 
-        PostResponseDto post = postService.readById(id);
         model.addAttribute("postInfo", post);
         model.addAttribute("postUpdate", new PostRequestDto());
-
         return "post/update";
     }
 

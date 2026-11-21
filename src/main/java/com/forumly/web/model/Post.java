@@ -32,7 +32,7 @@ public class Post {
     @Column(nullable = false)
     private int score=0;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Vote> votes;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -44,6 +44,6 @@ public class Post {
     private User author;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("createdAt DESC") // Сортування за датою (новіші перші)
+    @OrderBy("createdAt DESC")
     private List<Comment> comments = new ArrayList<>();
 }

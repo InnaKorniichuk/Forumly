@@ -6,6 +6,7 @@ import com.forumly.web.dto.post.PostResponseDto;
 import com.forumly.web.exception.ApplicationException;
 import com.forumly.web.model.Community;
 import com.forumly.web.model.Post;
+import com.forumly.web.model.Role;
 import com.forumly.web.model.User;
 import com.forumly.web.repository.CommunityRepository;
 import com.forumly.web.repository.PostRepository;
@@ -75,9 +76,12 @@ public class PostServiceImpl implements PostService {
     @Override
     public void delete(Long id, Long userId) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() ->ApplicationException.notFound("Post not found"));
+                .orElseThrow(() -> ApplicationException.notFound("Post not found"));
 
-        if (!post.getAuthor().getId().equals(userId)) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> ApplicationException.notFound("User not found"));
+
+        if (user.getRole() != Role.ADMIN && !post.getAuthor().getId().equals(userId)) {
             throw ApplicationException.unauthorized("Only post author or admin can delete");
         }
 
