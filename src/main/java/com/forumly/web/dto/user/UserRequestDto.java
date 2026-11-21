@@ -13,17 +13,13 @@ import tools.jackson.databind.annotation.JsonNaming;
 public class UserRequestDto {
     @NotBlank(message = "Email is required")
     @Email(message = "Must be a valid email address")
-    @Pattern(regexp = "[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}",
-            message = "Must be a valid email address")
-    String email;
+    private String email;
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 8, message = "Password must be at least 8 characters")
     @Pattern(
-            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$",
-            message = "Password must contain upper, lower case letters and a digit"
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$",
+            message = "Password must be at least 8 characters with upper, lower case letters and a digit"
     )
-    String password;
+    private String password;
 
     @NotBlank(message = "Nickname is required")
     @Size(min = 3, max = 50, message = "Nickname must be between 3 and 50 characters")
