@@ -51,7 +51,7 @@ public class PostController {
         return "redirect:/posts/" + post.getId() + "/read";
     }
 
-    @GetMapping("/{id}/delete")
+    @PostMapping("/{id}/delete")
     public String delete(@PathVariable Long id, Principal principal) {
         User currentUser = userService.findByEmail(principal.getName());
         postService.delete(id, currentUser.getId());

@@ -165,7 +165,7 @@
         </div>
 
         <form th:action="@{/posts/{user_id}/{id}/delete(user_id=${user.id},id=${post.id})}"
-              method="get"
+              method="post"
               onsubmit="return confirm('Delete this post permanently?');">
 
           <button type="submit"

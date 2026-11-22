@@ -5,6 +5,7 @@ import com.forumly.web.dto.community.CommunityRequestDto;
 import com.forumly.web.dto.community.CommunityResponseDto;
 import com.forumly.web.exception.ApplicationException;
 import com.forumly.web.model.Community;
+import com.forumly.web.model.Role;
 import com.forumly.web.model.User;
 import com.forumly.web.repository.CommunityRepository;
 import com.forumly.web.repository.UserRepository;
@@ -47,9 +48,17 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(Long id, Long userId) {
         Community community = communityRepository.findById(id)
                 .orElseThrow(() -> ApplicationException.notFound("Community with id " + id + " not found"));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> ApplicationException.notFound("User not found"));
+
+        if (user.getRole() != Role.ADMIN && !community.getOwner().getId().equals(userId)) {
+            throw ApplicationException.unauthorized("Only community owner or admin can delete");
+        }
+
         communityRepository.delete(community);
     }
 

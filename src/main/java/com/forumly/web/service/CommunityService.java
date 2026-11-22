@@ -11,7 +11,7 @@ public interface CommunityService {
 
     CommunityResponseDto readById(Long id);
 
-    void delete(Long id);
+    void delete(Long id, Long userId);
 
     List<CommunityResponseDto> getAll();
 

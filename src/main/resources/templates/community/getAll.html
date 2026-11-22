@@ -44,6 +44,33 @@
             background-color: #4338ca;
         }
 
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-actions form {
+            margin: 0;
+        }
+
+        .logout-btn {
+            background-color: white;
+            color: #4b5563;
+            border: 1px solid #d1d5db;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+
         table {
             width: 100%;
             background-color: white;
@@ -113,7 +140,14 @@
 
     <header>
         <h1>Communities</h1>
-        <a href="/communities/create" class="create-btn">+ Create Community</a>
+
+        <div class="header-actions">
+            <a href="/communities/create" class="create-btn">+ Create Community</a>
+
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
+        </div>
     </header>
 
     <table th:if="${communities != null and !communities.isEmpty()}">
@@ -148,7 +182,7 @@
 
             <td>
                 <form th:action="@{/communities/{id}/delete(id=${community.id})}"
-                      method="get"
+                      method="post"
                       onsubmit="return confirm('Delete this community permanently?');">
 
                     <button type="submit"

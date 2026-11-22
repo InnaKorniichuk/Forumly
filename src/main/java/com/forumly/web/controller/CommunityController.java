@@ -52,9 +52,10 @@ public class CommunityController {
         return "community/read";
     }
 
-    @GetMapping("/{id}/delete")
-    public String delete(@PathVariable Long id) {
-        communityService.delete(id);
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable Long id, Principal principal) {
+        User currentUser = userService.findByEmail(principal.getName());
+        communityService.delete(id, currentUser.getId());
         return "redirect:/communities/getAll";
     }
 

@@ -59,7 +59,6 @@
     .downvote { background:var(--down); }
     .empty { font-style:italic; color:var(--muted); }
 
-    /* MODAL */
     #editModal {
       display:none;
       position:fixed;
@@ -128,7 +127,7 @@
 
         <form th:if="${#authentication.name == comment.author.email}"
               th:action="@{/posts/{post_id}/comments/{id}/delete(post_id=${post.id},id=${comment.id})}"
-              method="get">
+              method="post">
           <button style="background:#fee2e2;color:#991b1b;">🗑</button>
         </form>
 
@@ -159,8 +158,11 @@
 <div id="editModal">
   <div class="modal-box">
     <h3>Edit comment</h3>
-    <form id="editForm" method="post">
-      <textarea id="editContent" name="content" required></textarea>
+      <form id="editForm" method="post">
+          <input type="hidden"
+                 th:name="${_csrf.parameterName}"
+                 th:value="${_csrf.token}">
+          <textarea id="editContent" name="content" required></textarea>
       <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:12px;">
         <button type="button" onclick="closeEditModal()">Cancel</button>
         <button class="primary-btn" type="submit">Save</button>

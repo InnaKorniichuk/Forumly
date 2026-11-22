@@ -37,7 +37,7 @@ public class CommentController {
         return "redirect:/posts/" + postId + "/read";
     }
 
-    @GetMapping("/{id}/delete")
+    @PostMapping("/{id}/delete")
     public String delete(@PathVariable("post_id") Long postId,
                          @PathVariable Long id,
                          Principal principal) {
