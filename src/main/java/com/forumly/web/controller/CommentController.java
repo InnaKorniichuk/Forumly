@@ -1,7 +1,6 @@
 package com.forumly.web.controller;
 
 import com.forumly.web.dto.comment.CommentRequestDto;
-import com.forumly.web.exception.ApplicationException;
 import com.forumly.web.model.User;
 import com.forumly.web.service.CommentService;
 import com.forumly.web.service.UserService;
@@ -56,10 +55,6 @@ public class CommentController {
             return "redirect:/posts/" + postId + "/read";
 
         User currentUser = userService.findByEmail(principal.getName());
-
-        if (!currentUser.getId().equals(commentService.readById(id).getAuthor().getId()))
-            throw ApplicationException.unauthorized("You are not allowed to edit this comment");
-
         commentService.update(id, dto, currentUser.getId());
         return "redirect:/posts/" + postId + "/read";
     }

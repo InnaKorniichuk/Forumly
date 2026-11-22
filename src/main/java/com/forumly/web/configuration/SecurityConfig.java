@@ -16,7 +16,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-
     private final UserRepository userRepository;
 
     public SecurityConfig(UserRepository userRepository) {
@@ -32,7 +31,8 @@ public class SecurityConfig {
                                 "/users/create",
                                 "/posts/*/read",
                                 "/communities/getAll",
-                                "/communities/*/read"
+                                "/communities/*/read",
+                                "/access-denied"
                         ).permitAll()
                         .requestMatchers(
                                 "/users/*/delete",
@@ -41,7 +41,6 @@ public class SecurityConfig {
                         ).hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
@@ -51,7 +50,8 @@ public class SecurityConfig {
                         .failureUrl("/login?error=true")
                         .permitAll()
                 )
-
+                .exceptionHandling(ex -> ex.accessDeniedHandler((request, response, accessDeniedException) ->
+                        response.sendRedirect("/access-denied")))
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout=true")

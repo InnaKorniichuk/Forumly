@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Error</title>
+</head>
+<body style="font-family:system-ui,sans-serif;text-align:center;padding:80px;background:#f4f6fb;color:#1f2937;">
+<h1 th:text="${status}">Error</h1>
+<p th:text="${message}">Something went wrong</p>
+<a href="/communities/getAll" style="color:#4f46e5;">Back to communities</a>
+</body>
+</html>
