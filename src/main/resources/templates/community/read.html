@@ -56,34 +56,6 @@
             color: var(--muted);
         }
 
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .header-actions form {
-            margin: 0;
-        }
-
-        .logout-btn {
-            background-color: white;
-            color: #4b5563;
-            border: 1px solid #d1d5db;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            font-family: inherit;
-            cursor: pointer;
-            transition: background-color 0.15s ease, color 0.15s ease;
-        }
-
-        .logout-btn:hover {
-            background-color: #f3f4f6;
-            color: #1f2937;
-        }
-
         .posts-header {
             display: flex;
             justify-content: space-between;
@@ -129,6 +101,8 @@
             justify-content: space-between;
             align-items: center;
             margin-top: 6px;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .post-score {
@@ -140,7 +114,10 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            flex-wrap: wrap;
         }
+
+        .actions form { margin: 0; }
 
         .vote-buttons {
             display: flex;
@@ -149,23 +126,24 @@
 
         .vote-buttons button {
             border: none;
-            width: 34px;
-            height: 34px;
+            padding: 7px 12px;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 13px;
+            font-weight: 600;
             cursor: pointer;
         }
 
-        .upvote { background: var(--up); }
-        .downvote { background: var(--down); }
+        .upvote { background: var(--up); color: #1e3a8a; }
+        .downvote { background: var(--down); color: #991b1b; }
 
         .delete-btn {
             background: var(--danger);
             color: white;
             border: none;
-            padding: 6px 10px;
+            padding: 7px 12px;
             border-radius: 8px;
             font-size: 13px;
+            font-weight: 600;
             cursor: pointer;
         }
 
@@ -181,20 +159,23 @@
 
         .back-link {
             display: inline-block;
-            margin-top: 10px;
+            margin-bottom: 14px;
             text-decoration: none;
             color: var(--primary);
             font-weight: 600;
         }
+
         .edit-btn {
             background: #f59e0b;
             color: white;
             border: none;
-            padding: 6px 10px;
+            padding: 7px 12px;
             border-radius: 8px;
             font-size: 13px;
+            font-weight: 600;
             cursor: pointer;
             text-decoration: none;
+            display: inline-block;
         }
 
         .edit-btn:hover {
@@ -205,6 +186,8 @@
 
 <body>
 <div class="container">
+
+    <div th:replace="~{fragments/navigation :: navigation}"></div>
 
     <a href="/communities/getAll" class="back-link">
         Back to communities
@@ -220,12 +203,6 @@
                     · Owner:
                     <strong th:text="${community.owner.nickname}"></strong>
                 </div>
-            </div>
-
-            <div class="header-actions">
-                <form th:action="@{/logout}" method="post">
-                    <button type="submit" class="logout-btn">Logout</button>
-                </form>
             </div>
         </div>
     </div>
@@ -257,24 +234,24 @@
                         <div class="vote-buttons">
                             <form th:action="@{/votes/posts/{id}/add(id=${post.id})}" method="post">
                                 <input type="hidden" name="voteType" value="UP">
-                                <button class="upvote">⬆</button>
+                                <button class="upvote">Upvote</button>
                             </form>
 
                             <form th:action="@{/votes/posts/{id}/add(id=${post.id})}" method="post">
                                 <input type="hidden" name="voteType" value="DOWN">
-                                <button class="downvote">⬇</button>
+                                <button class="downvote">Downvote</button>
                             </form>
                         </div>
 
                         <a th:href="@{/posts/{id}/update(id=${post.id})}"
                            class="edit-btn">
-                            ✏️
+                            Edit
                         </a>
 
                         <form th:action="@{/posts/{id}/delete(id=${post.id})}"
-                              method="get"
+                              method="post"
                               onsubmit="return confirm('Delete this post permanently?');">
-                            <button class="delete-btn">🗑</button>
+                            <button class="delete-btn">Delete</button>
                         </form>
 
                     </div>
@@ -284,7 +261,7 @@
 
         <div class="empty"
              th:if="${community.posts == null or community.posts.isEmpty()}">
-            No posts yet. Be the first to write one ✨
+            No posts yet. Be the first to write one
         </div>
     </div>
 

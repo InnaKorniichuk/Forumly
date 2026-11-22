@@ -94,6 +94,8 @@
 
 <div class="container">
 
+  <div th:replace="~{fragments/navigation :: navigation}"></div>
+
   <h1 th:text="${user.nickname}">Nickname</h1>
 
   <div class="user-meta">

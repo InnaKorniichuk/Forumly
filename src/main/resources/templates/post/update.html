@@ -93,6 +93,8 @@
 
 <div class="container">
 
+    <div th:replace="~{fragments/navigation :: navigation}"></div>
+
     <h1>Edit post</h1>
 
     <form th:action="@{/posts/{id}/update(id=${postInfo.id})}"

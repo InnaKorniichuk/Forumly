@@ -48,6 +48,8 @@
 <div class="container">
   <h2>Create Community</h2>
 
+  <div th:replace="~{fragments/navigation :: navigation}"></div>
+
   <form th:action="@{/communities/create}"
         th:object="${community}"
         method="post">

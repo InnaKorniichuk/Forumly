@@ -52,11 +52,12 @@
     .comment { border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:16px; }
     .comment-header { display:flex; justify-content:space-between; align-items:center; }
     .comment-author { font-weight:600; }
-    .comment-footer { display:flex; justify-content:space-between; align-items:center; margin-top:10px; }
+    .comment-footer { display:flex; justify-content:space-between; align-items:center; margin-top:10px; flex-wrap:wrap; gap:8px; }
+    .comment-footer form { margin:0; }
+    .comment-footer button { font-size:13px; font-weight:600; padding:8px 12px; }
     .vote-buttons { display:flex; gap:6px; }
-    .vote-buttons button { width:34px; height:34px; display:flex; align-items:center; justify-content:center; font-size:16px; }
-    .upvote { background:var(--up); }
-    .downvote { background:var(--down); }
+    .upvote { background:var(--up); color:#1e3a8a; }
+    .downvote { background:var(--down); color:#991b1b; }
     .empty { font-style:italic; color:var(--muted); }
 
     #editModal {
@@ -82,6 +83,8 @@
 <body>
 
 <div class="container">
+
+  <div th:replace="~{fragments/navigation :: navigation}"></div>
 
   <h1 th:text="${post.title}">Post title</h1>
 
@@ -128,7 +131,7 @@
         <form th:if="${#authentication.name == comment.author.email}"
               th:action="@{/posts/{post_id}/comments/{id}/delete(post_id=${post.id},id=${comment.id})}"
               method="post">
-          <button style="background:#fee2e2;color:#991b1b;">🗑</button>
+          <button style="background:#fee2e2;color:#991b1b;">Delete</button>
         </form>
 
         <button th:if="${#authentication.name == comment.author.email}"
@@ -136,17 +139,18 @@
                 th:data-content="${comment.content}"
                 onclick="openEditModal(this)"
                 style="background:#e0e7ff;color:#1e3a8a;">
-          ✏️ Edit
+          Edit
         </button>
 
         <div class="vote-buttons">
           <form th:action="@{/votes/comments/{id}/add(id=${comment.id})}" method="post">
             <input type="hidden" name="voteType" value="UP">
-            <button class="upvote">⬆</button>
+            <button class="upvote">Upvote</button>
           </form>
+
           <form th:action="@{/votes/comments/{id}/add(id=${comment.id})}" method="post">
             <input type="hidden" name="voteType" value="DOWN">
-            <button class="downvote">⬇</button>
+            <button class="downvote">Downvote</button>
           </form>
         </div>
 
@@ -158,11 +162,11 @@
 <div id="editModal">
   <div class="modal-box">
     <h3>Edit comment</h3>
-      <form id="editForm" method="post">
-          <input type="hidden"
-                 th:name="${_csrf.parameterName}"
-                 th:value="${_csrf.token}">
-          <textarea id="editContent" name="content" required></textarea>
+    <form id="editForm" method="post">
+      <input type="hidden"
+             th:name="${_csrf.parameterName}"
+             th:value="${_csrf.token}">
+      <textarea id="editContent" name="content" required></textarea>
       <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:12px;">
         <button type="button" onclick="closeEditModal()">Cancel</button>
         <button class="primary-btn" type="submit">Save</button>

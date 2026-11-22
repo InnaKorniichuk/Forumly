@@ -25,34 +25,6 @@
             margin-bottom: 24px;
         }
 
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .header-actions form {
-            margin: 0;
-        }
-
-        .logout-btn {
-            background-color: white;
-            color: #4b5563;
-            border: 1px solid #d1d5db;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            font-family: inherit;
-            cursor: pointer;
-            transition: background-color 0.15s ease, color 0.15s ease;
-        }
-
-        .logout-btn:hover {
-            background-color: #f3f4f6;
-            color: #1f2937;
-        }
-
         h1 {
             margin: 0;
         }
@@ -125,14 +97,10 @@
 
 <div class="container">
 
+    <div th:replace="~{fragments/navigation :: navigation}"></div>
+
     <div class="page-header">
         <h1>User communities</h1>
-
-        <div class="header-actions">
-            <form th:action="@{/logout}" method="post">
-                <button type="submit" class="logout-btn">Logout</button>
-            </form>
-        </div>
     </div>
 
     <table th:if="${communities != null and !communities.isEmpty()}">

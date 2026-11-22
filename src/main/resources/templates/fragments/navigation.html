@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="navigation">
+    <style>
+        .nav { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap;
+            gap:12px; padding-bottom:16px; margin-bottom:24px; border-bottom:1px solid #e5e7eb; }
+        .nav-links { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+        .nav-brand { font-weight:700; font-size:18px; color:#4f46e5; text-decoration:none; margin-right:12px; }
+        .nav-link { color:#4b5563; text-decoration:none; font-size:14px; font-weight:500;
+            padding:6px 10px; border-radius:8px; }
+        .nav-link:hover { background:#eef2ff; color:#4f46e5; }
+        .nav form { margin:0; }
+        .nav-logout { background:white; color:#4b5563; border:1px solid #d1d5db; padding:6px 14px;
+            border-radius:8px; font-size:14px; font-weight:500; font-family:inherit; cursor:pointer; }
+        .nav-logout:hover { background:#f3f4f6; color:#1f2937; }
+    </style>
+
+    <nav class="nav">
+        <div class="nav-links">
+            <a class="nav-brand" th:href="@{/communities/getAll}">Forumly</a>
+            <a class="nav-link" th:href="@{/communities/getAll}">Communities</a>
+
+            <th:block th:if="${#authorization.expression('isAuthenticated()')}">
+                <a class="nav-link"
+                   th:href="@{/users/{id}/read(id=${#authentication.principal.id})}">My profile</a>
+                <a class="nav-link"
+                   th:href="@{/communities/{id}/getByUserId(id=${#authentication.principal.id})}">My communities</a>
+                <a class="nav-link"
+                   th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
+                   th:href="@{/users/all}">Users</a>
+            </th:block>
+        </div>
+
+        <div class="nav-links">
+            <form th:if="${#authorization.expression('isAuthenticated()')}"
+                  th:action="@{/logout}" method="post">
+                <button type="submit" class="nav-logout">Logout</button>
+            </form>
+            <a class="nav-link" th:unless="${#authorization.expression('isAuthenticated()')}"
+               th:href="@{/login}">Login</a>
+        </div>
+    </nav>
+</div>
+
+</body>
+</html>

@@ -86,6 +86,8 @@
 <body>
 <div class="container">
 
+    <div th:replace="~{fragments/navigation :: navigation}"></div>
+
     <h1>Create new post</h1>
 
     <form th:action="@{/posts/create/{id}(id=${community_id})}"
