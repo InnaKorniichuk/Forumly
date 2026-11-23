@@ -6,51 +6,89 @@
 
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: #f4f6fb;
+      margin: 0;
+      padding: 40px 16px;
+      color: #1f2937;
     }
+
     .container {
-      width: 400px;
-      margin: 60px auto;
+      max-width: 560px;
+      margin: 0 auto;
       background: white;
-      padding: 25px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 32px;
+      border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.06);
     }
+
     h2 {
-      text-align: center;
+      margin: 0 0 20px;
     }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
+
+    form.create-form label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
     }
-    button {
+
+    form.create-form input {
       width: 100%;
-      padding: 10px;
-      margin-top: 15px;
-      background: #4CAF50;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    .error {
+      color: #dc2626;
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    form.create-form button {
+      background: #4f46e5;
       color: white;
       border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 600;
       cursor: pointer;
     }
-    button:hover {
-      background: #45a049;
+
+    form.create-form button:hover {
+      background: #4338ca;
     }
-    .error {
-      color: red;
-      font-size: 14px;
+
+    .cancel {
+      color: #4f46e5;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .cancel:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h2>Create Community</h2>
 
   <div th:replace="~{fragments/navigation :: navigation}"></div>
 
-  <form th:action="@{/communities/create}"
+  <h2>Create Community</h2>
+
+  <form class="create-form"
+        th:action="@{/communities/create}"
         th:object="${community}"
         method="post">
 
@@ -65,7 +103,10 @@
          th:errors="*{name}">
     </div>
 
-    <button type="submit">Create</button>
+    <div class="actions">
+      <button type="submit">Create</button>
+      <a class="cancel" th:href="@{/communities/getAll}">Cancel</a>
+    </div>
   </form>
 </div>
 
