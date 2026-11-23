@@ -1,0 +1,30 @@
+services:
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: forumly
+      MYSQL_ROOT_PASSWORD: demo-root-password
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pdemo-root-password"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://db:3306/forumly
+      DB_USERNAME: root
+      DB_PASSWORD: demo-root-password
+      ADMIN_EMAIL: admin@gmail.com
+      ADMIN_PASSWORD: Admin12345
+    ports:
+      - "8080:8080"
+
+volumes:
+  db_data:
